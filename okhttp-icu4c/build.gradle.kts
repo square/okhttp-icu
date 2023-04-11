@@ -80,46 +80,25 @@ configure<MavenPublishBaseExtension> {
   )
 }
 
-val buildIcu4c by tasks.creating {
-  description = "Build icu4c native library for the host platform"
-
-  doLast {
-    exec {
-      workingDir("$rootDir/submodules/icu/icu4c/source")
-
-      // See runConfigureICU for a description of options and their meanings.
-      commandLine(
-        "./runConfigureICU",
-        "MacOSX",
-        "--enable-static",
-        "--disable-shared",
-      )
-    }
-
-    exec {
-      workingDir("$rootDir/submodules/icu/icu4c/source")
-
-      // Assume gnu-make.
-      commandLine("make")
-    }
-  }
+val buildIcu4cMacOSX = tasks.register<BuildIcu4c>("buildIcu4cMacOSX") {
+  platform.set("MacOSX")
 }
 
 val cleanIcu4c by tasks.creating {
-  description = "clean up after buildIcu4c"
+  description = "clean up after buildIcu4c by resetting git"
 
   doLast {
     exec {
-      commandLine("make", "clean")
+      commandLine("git", "clean", "-fdx")
     }
   }
 }
 
 tasks.all {
-  if (name == "commonize") {
-    dependsOn(buildIcu4c)
+  if (name == "cinteropIcu4cMacosArm64") {
+    dependsOn(buildIcu4cMacOSX)
   }
   if (name == "clean") {
-//    dependsOn(cleanIcu4c)
+    dependsOn(cleanIcu4c)
   }
 }
