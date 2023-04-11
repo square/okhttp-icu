@@ -1,0 +1,12 @@
+[versions]
+kotlin = "1.8.10"
+okio = "3.3.0"
+
+[libraries]
+cklib-gradle-plugin = { module = "co.touchlab:cklib-gradle-plugin", version = "0.2.4" }
+dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version = "1.8.10" }
+junit = { module = "junit:junit", version = "4.13.2" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
+mavenPublish-gradle-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version = "0.25.1" }
+okio-core = { module = "com.squareup.okio:okio", version.ref = "okio" }
