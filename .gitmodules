@@ -1,0 +1,4 @@
+[submodule "submodules/icu"]
+	path = submodules/icu
+	url = git@github.com:unicode-org/icu.git
+	branch = main
