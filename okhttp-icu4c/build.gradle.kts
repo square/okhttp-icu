@@ -13,7 +13,7 @@ plugins {
 }
 
 kotlin {
-//  linuxX64()
+  linuxX64()
 //  macosX64()
   macosArm64()
 //  iosArm64()
@@ -84,6 +84,10 @@ val buildIcu4cMacOSX = tasks.register<BuildIcu4c>("buildIcu4cMacOSX") {
   platform.set("MacOSX")
 }
 
+val buildIcu4cLinux = tasks.register<BuildIcu4c>("buildIcu4cLinux") {
+  platform.set("Linux")
+}
+
 val cleanIcu4c by tasks.creating {
   description = "clean up after buildIcu4c by resetting git"
 
@@ -96,6 +100,9 @@ val cleanIcu4c by tasks.creating {
 
 tasks.all {
   if (name == "cinteropIcu4cMacosArm64") {
+    dependsOn(buildIcu4cMacOSX)
+  }
+  if (name == "cinteropIcu4cLinuxX64") {
     dependsOn(buildIcu4cMacOSX)
   }
   if (name == "clean") {
