@@ -1,9 +1,5 @@
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import com.vanniktech.maven.publish.SonatypeHost
-import java.net.URI
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -109,6 +105,50 @@ allprojects {
           connection.set("scm:git:https://github.com/square/okhttp-icu.git")
           developerConnection.set("scm:git:ssh://git@github.com/square/okhttp-icu.git")
         }
+      }
+    }
+  }
+
+  // Disable every task that doesn't match the build host. We haven't done the work to support
+  // either cross-compiling ICU, or testing cross-compiled ICU.
+  //
+  // We still include non-matching platforms in our Gradle configuration because we want the full
+  // set of platforms to be listed in the Kotlin Multiplatform .module file.
+  tasks.all {
+    for (kotlinNativePlatform in KotlinNativePlatform.values()) {
+      if (kotlinNativePlatform.name !in name && kotlinNativePlatform.lowerCamel !in name) {
+        continue
+      }
+
+      onlyIf { kotlinNativePlatform.matchesBuildHost() }
+      check(
+        name == "${kotlinNativePlatform.lowerCamel}Binaries" ||
+        name == "${kotlinNativePlatform.lowerCamel}MainBinaries" ||
+        name == "${kotlinNativePlatform.lowerCamel}MainKlibrary" ||
+        name == "${kotlinNativePlatform.lowerCamel}MetadataJar" ||
+        name == "${kotlinNativePlatform.lowerCamel}ProcessResources" ||
+        name == "${kotlinNativePlatform.lowerCamel}ReleaseTest" ||
+        name == "${kotlinNativePlatform.lowerCamel}SourcesJar" ||
+        name == "${kotlinNativePlatform.lowerCamel}Test" ||
+        name == "${kotlinNativePlatform.lowerCamel}TestBinaries" ||
+        name == "${kotlinNativePlatform.lowerCamel}TestKlibrary" ||
+        name == "${kotlinNativePlatform.lowerCamel}TestProcessResources" ||
+        name == "cinteropIcu4c${kotlinNativePlatform}" ||
+        name == "clean${kotlinNativePlatform}ReleaseTest" ||
+        name == "clean${kotlinNativePlatform}Test" ||
+        name == "compileKotlin${kotlinNativePlatform}" ||
+        name == "compileTestKotlin${kotlinNativePlatform}" ||
+        name == "copyCinteropIcu4c${kotlinNativePlatform}" ||
+        name == "generateMetadataFileFor${kotlinNativePlatform}Publication" ||
+        name == "generatePomFileFor${kotlinNativePlatform}Publication" ||
+        name == "link${kotlinNativePlatform}" ||
+        name == "linkDebugTest${kotlinNativePlatform}" ||
+        name == "linkReleaseTest${kotlinNativePlatform}" ||
+        name == "publish${kotlinNativePlatform}PublicationToMavenCentralRepository" ||
+        name == "publish${kotlinNativePlatform}PublicationToMavenLocal" ||
+        name == "sign${kotlinNativePlatform}Publication"
+      ) {
+        "unexpected task name $name contains a Kotlin/Native platform name: update this allowlist?"
       }
     }
   }
