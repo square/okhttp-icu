@@ -14,7 +14,7 @@ plugins {
 
 kotlin {
   linuxX64()
-//  macosX64()
+  macosX64()
   macosArm64()
 //  iosArm64()
 //  iosX64()
@@ -72,22 +72,6 @@ kotlin {
   }
 }
 
-configure<MavenPublishBaseExtension> {
-  configure(
-    KotlinMultiplatform(
-      javadocJar = JavadocJar.Dokka("dokkaGfm")
-    )
-  )
-}
-
-val buildIcu4cMacOSX = tasks.register<BuildIcu4c>("buildIcu4cMacOSX") {
-  platform.set("MacOSX")
-}
-
-val buildIcu4cLinux = tasks.register<BuildIcu4c>("buildIcu4cLinux") {
-  platform.set("Linux")
-}
-
 val cleanIcu4c by tasks.creating {
   description = "clean up after buildIcu4c by resetting git"
 
@@ -98,14 +82,70 @@ val cleanIcu4c by tasks.creating {
   }
 }
 
+// Avoid cross-compiling ICU; we haven't done the work to support that.
+val osArch = System.getProperty("os.arch")
+val isX64 = osArch == "x86_64" || osArch == "amd64"
+val isAarch64 = osArch == "aarch64"
+val osName = System.getProperty("os.name")
+val isMac = osName == "Mac OS X"
+val isLinux = osName == "Linux"
+
+val buildIcu4cMacOSX = tasks.register<BuildIcu4c>("buildIcu4cMacOSX") {
+  platform.set("MacOSX")
+  onlyIf { isMac }
+}
+
+val buildIcu4cLinux = tasks.register<BuildIcu4c>("buildIcu4cLinux") {
+  platform.set("Linux")
+  onlyIf { isLinux }
+}
+
 tasks.all {
-  if (name == "cinteropIcu4cMacosArm64") {
-    dependsOn(buildIcu4cMacOSX)
+  when (name) {
+    "cinteropIcu4cMacosX64" -> {
+      dependsOn(buildIcu4cMacOSX)
+      onlyIf { isMac && isX64 }
+    }
+    "cinteropIcu4cMacosArm64" -> {
+      dependsOn(buildIcu4cMacOSX)
+      onlyIf { isMac && isAarch64 }
+    }
+    "cinteropIcu4cLinuxX64" -> {
+      dependsOn(buildIcu4cLinux)
+      onlyIf { isLinux && isX64 }
+    }
   }
-  if (name == "cinteropIcu4cLinuxX64") {
-    dependsOn(buildIcu4cMacOSX)
+
+  when (name) {
+    "compileKotlinMacosX64",
+    "compileTestKotlinMacosX64",
+    "publishMacosX64PublicationToMavenCentralRepository" -> {
+      onlyIf { isMac && isX64 }
+    }
+
+    "compileKotlinMacosArm64",
+    "compileTestKotlinMacosArm64",
+    "publishMacosArm64PublicationToMavenCentralRepository" -> {
+      onlyIf { isMac && isAarch64 }
+    }
+
+    "compileKotlinLinuxX64",
+    "compileTestKotlinLinuxX64",
+    "publishLinuxX64PublicationToMavenCentralRepository" -> {
+      onlyIf { isLinux && isX64 }
+    }
   }
-  if (name == "clean") {
-    dependsOn(cleanIcu4c)
+
+  when (name) {
+    "clean" -> dependsOn(cleanIcu4c)
   }
+}
+
+
+configure<MavenPublishBaseExtension> {
+  configure(
+    KotlinMultiplatform(
+      javadocJar = JavadocJar.Dokka("dokkaGfm")
+    )
+  )
 }

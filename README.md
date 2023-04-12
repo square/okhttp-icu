@@ -31,8 +31,6 @@ Developing
 You'll need [Git LFS] for ICU.
 
 
-git@github.com:unicode-org/icu.git
-
 [Git LFS]: https://git-lfs.com/
 [Git Submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
 [ICU]: https://icu.unicode.org/
