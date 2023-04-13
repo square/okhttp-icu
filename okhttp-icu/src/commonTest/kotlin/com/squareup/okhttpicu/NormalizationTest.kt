@@ -15,19 +15,20 @@
  */
 package com.squareup.okhttpicu
 
+import com.squareup.okhttpicu.OkHttpIcu4c.normalizeNfc
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NormalizationTest {
   @Test
-  fun test() {
+  fun normalizeWithIcu4c() {
     val lines = NormalizationTestData.load()
-    for ((partName, partLines) in lines.groupBy { it.part }) {
-      for (line: NormalizationTestData in partLines) {
-        val message = "$partName ${line.lineNumber} ${line.source} ${line.comment}"
-        val normalized = line.source // normalizeNfc(line.source)
-        assertEquals(normalized, line.source, message)
-      }
+    for (line in lines) {
+      assertEquals(
+        line.nfc,
+        normalizeNfc(line.source),
+        "${line.part} ${line.lineNumber} ${line.source} ${line.comment}",
+      )
     }
   }
 }
