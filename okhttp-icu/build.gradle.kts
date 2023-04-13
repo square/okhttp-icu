@@ -16,7 +16,7 @@ kotlin {
 //  android {
 //    publishLibraryVariants("release")
 //  }
-  jvm()
+//  jvm()
 
 //  js {
 //    nodejs()
@@ -40,6 +40,8 @@ kotlin {
     val commonTest by getting {
       dependencies {
         implementation(kotlin("test"))
+        api(libs.okio.core)
+        api(projects.okhttpIcu4c)
       }
     }
 
