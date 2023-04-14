@@ -23,7 +23,7 @@ kotlin {
 //  }
 
 //  linuxX64()
-//  macosX64()
+  macosX64()
   macosArm64()
 //  iosArm64()
 //  iosX64()
@@ -46,8 +46,10 @@ kotlin {
     }
 
     val nativeMain by creating {
+      dependsOn(commonMain)
     }
     val nativeTest by creating {
+      dependsOn(commonTest)
     }
 
     targets.withType<KotlinNativeTarget> {
@@ -68,6 +70,27 @@ kotlin {
           setExecutionSourceFrom(binaries.getByName("releaseTest") as TestExecutable)
         }
       }
+    }
+
+    val appleMain by creating {
+      dependsOn(nativeMain)
+    }
+    val appleTest by creating {
+      dependsOn(nativeTest)
+    }
+
+    val macosArm64Main by getting {
+      dependsOn(appleMain)
+    }
+    val macosArm64Test by getting {
+      dependsOn(appleTest)
+    }
+
+    val macosX64Main by getting {
+      dependsOn(appleMain)
+    }
+    val macosX64Test by getting {
+      dependsOn(appleTest)
     }
   }
 }
