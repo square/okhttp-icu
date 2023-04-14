@@ -16,5 +16,5 @@
 package com.squareup.okhttpicu
 
 class Icu4cNormalizationTest : AbstractNormalizationTest() {
-  override val okhttpIcu = ICU4C_OKHTTP_ICU
+  override val normalizer = ICU4C_NORMALIZER
 }

@@ -16,7 +16,7 @@
 package com.squareup.okhttpicu
 
 class ApplePlatformNormalizationTest : AbstractNormalizationTest() {
-  override val okhttpIcu = SYSTEM_OKHTTP_ICU
+  override val normalizer = SYSTEM_NORMALIZER
 
   override fun isKnownFailure(test: NormalizationTestData) = when (test.lineNumber) {
     67, // HANGUL CHOSEONG KIYEOK, HANGUL SYLLABLE GA, HANGUL JONGSEONG KIYEOK

@@ -19,7 +19,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 abstract class AbstractNormalizationTest {
-  abstract val okhttpIcu: OkHttpIcu
+  abstract val normalizer: Normalizer
 
   open fun isKnownFailure(test: NormalizationTestData): Boolean = false
 
@@ -30,7 +30,7 @@ abstract class AbstractNormalizationTest {
       try {
         assertEquals(
           line.nfc,
-          okhttpIcu.normalizeNfc(line.source),
+          normalizer.normalizeNfc(line.source),
           "${line.part} ${line.lineNumber} ${line.source} ${line.comment}",
         )
       } catch (e: AssertionError) {

@@ -28,7 +28,7 @@ class OkHttpIcu4cTest {
     //         c  a  f  e  ´    ␣  🍩
     val nfd = "43 61 66 65 cc81 20 f09f8da9".replace(" ", "").decodeHex().utf8()
 
-    assertEquals(nfc, OkHttpIcu4c.normalizeNfc(nfc))
-    assertEquals(nfc, OkHttpIcu4c.normalizeNfc(nfd))
+    assertEquals(nfc, Icu4c.normalizeNfc(nfc))
+    assertEquals(nfc, Icu4c.normalizeNfc(nfd))
   }
 }

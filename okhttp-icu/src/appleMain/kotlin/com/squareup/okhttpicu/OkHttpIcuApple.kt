@@ -18,7 +18,7 @@ package com.squareup.okhttpicu
 import platform.Foundation.NSString
 import platform.Foundation.precomposedStringWithCanonicalMapping
 
-val SYSTEM_OKHTTP_ICU = object : OkHttpIcu {
+val SYSTEM_NORMALIZER = object : Normalizer {
   override fun normalizeNfc(string: String): String {
     // https://kotlinlang.org/api/latest/jvm/stdlib/kotlinx.cinterop/-create-n-s-string-from-k-string.html
     @Suppress("CAST_NEVER_SUCCEEDS")

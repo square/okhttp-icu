@@ -30,7 +30,7 @@ import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toKStringFromUtf16
 import kotlinx.cinterop.utf16
 
-object OkHttpIcu4c {
+object Icu4c {
   private val nfc: CPointer<UNormalizer2> = memScoped {
     val errorCodeVar = alloc<UErrorCodeVar>()
     unorm2_getNFCInstance_73(errorCodeVar.ptr)

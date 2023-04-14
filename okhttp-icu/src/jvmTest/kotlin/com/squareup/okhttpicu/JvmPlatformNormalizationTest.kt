@@ -16,7 +16,7 @@
 package com.squareup.okhttpicu
 
 class JvmPlatformNormalizationTest : AbstractNormalizationTest() {
-  override val okhttpIcu = SYSTEM_OKHTTP_ICU
+  override val normalizer = SYSTEM_NORMALIZER
 
   override fun isKnownFailure(test: NormalizationTestData): Boolean {
     // The JVM embeds an old version of ICU.

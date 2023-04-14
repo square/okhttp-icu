@@ -15,10 +15,10 @@
  */
 package com.squareup.okhttpicu
 
-import java.text.Normalizer
+import java.text.Normalizer.Form.NFC
 
-val SYSTEM_OKHTTP_ICU = object : OkHttpIcu {
+val SYSTEM_NORMALIZER = object : Normalizer {
   override fun normalizeNfc(string: String): String {
-    return Normalizer.normalize(string, Normalizer.Form.NFC)
+    return java.text.Normalizer.normalize(string, NFC)
   }
 }
