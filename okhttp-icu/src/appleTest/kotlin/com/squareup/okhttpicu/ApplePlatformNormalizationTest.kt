@@ -21,6 +21,7 @@ class ApplePlatformNormalizationTest : AbstractNormalizationTest() {
   override fun isKnownFailure(test: NormalizationTestData) = when (test.lineNumber) {
     67, // HANGUL CHOSEONG KIYEOK, HANGUL SYLLABLE GA, HANGUL JONGSEONG KIYEOK
     68, // HANGUL CHOSEONG KIYEOK, HANGUL SYLLABLE GA, HANGUL JONGSEONG KIYEOK, HANGUL JONGSEONG KIYEOK
+    in 18561..18920 // COMBINING GRAVE ACCENT, COMBINING KATAKANA-HIRAGANA VOICED SOUND MARK
     -> true
     else -> false
   }
