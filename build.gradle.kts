@@ -1,8 +1,10 @@
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import com.vanniktech.maven.publish.SonatypeHost
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 buildscript {
   repositories {
@@ -65,6 +67,15 @@ allprojects {
   // triggers 'signJsPublication' even when we aren't publishing (and so don't have signing keys).
   tasks.withType<Sign>().configureEach {
     enabled = project.findProperty("signingInMemoryKey") != null
+  }
+
+  tasks.withType<KotlinNativeTest>().configureEach {
+    testLogging {
+      events("PASSED", "FAILED", "SKIPPED")
+      exceptionFormat = TestExceptionFormat.FULL
+      showStandardStreams = true
+      showStackTraces = true
+    }
   }
 
   plugins.withId("org.jetbrains.kotlin.multiplatform") {
