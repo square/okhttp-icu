@@ -16,7 +16,7 @@ kotlin {
 //  android {
 //    publishLibraryVariants("release")
 //  }
-//  jvm()
+  jvm()
 
 //  js {
 //    nodejs()
@@ -41,7 +41,6 @@ kotlin {
       dependencies {
         implementation(kotlin("test"))
         api(libs.okio.core)
-        api(projects.okhttpIcu4c)
       }
     }
 
@@ -50,6 +49,9 @@ kotlin {
     }
     val nativeTest by creating {
       dependsOn(commonTest)
+      dependencies {
+        api(projects.okhttpIcu4c)
+      }
     }
 
     targets.withType<KotlinNativeTarget> {

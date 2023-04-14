@@ -15,13 +15,10 @@
  */
 package com.squareup.okhttpicu
 
-class ApplePlatformNormalizationTest : AbstractNormalizationTest() {
-  override val okhttpIcu = SYSTEM_OKHTTP_ICU
+import java.text.Normalizer
 
-  override fun isKnownFailure(test: NormalizationTestData) = when (test.lineNumber) {
-    67, // HANGUL CHOSEONG KIYEOK, HANGUL SYLLABLE GA, HANGUL JONGSEONG KIYEOK
-    68, // HANGUL CHOSEONG KIYEOK, HANGUL SYLLABLE GA, HANGUL JONGSEONG KIYEOK, HANGUL JONGSEONG KIYEOK
-    -> true
-    else -> false
+val SYSTEM_OKHTTP_ICU = object : OkHttpIcu {
+  override fun normalizeNfc(string: String): String {
+    return Normalizer.normalize(string, Normalizer.Form.NFC)
   }
 }

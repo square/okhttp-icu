@@ -15,13 +15,11 @@
  */
 package com.squareup.okhttpicu
 
-class ApplePlatformNormalizationTest : AbstractNormalizationTest() {
+class JvmPlatformNormalizationTest : AbstractNormalizationTest() {
   override val okhttpIcu = SYSTEM_OKHTTP_ICU
 
-  override fun isKnownFailure(test: NormalizationTestData) = when (test.lineNumber) {
-    67, // HANGUL CHOSEONG KIYEOK, HANGUL SYLLABLE GA, HANGUL JONGSEONG KIYEOK
-    68, // HANGUL CHOSEONG KIYEOK, HANGUL SYLLABLE GA, HANGUL JONGSEONG KIYEOK, HANGUL JONGSEONG KIYEOK
-    -> true
-    else -> false
+  override fun isKnownFailure(test: NormalizationTestData): Boolean {
+    // The JVM embeds an old version of ICU.
+    return test.lineNumber in 17149.. 18948
   }
 }

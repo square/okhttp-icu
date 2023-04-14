@@ -21,8 +21,7 @@ import kotlin.test.assertEquals
 abstract class AbstractNormalizationTest {
   abstract val okhttpIcu: OkHttpIcu
 
-  open val knownFailureLineNumbers: Set<Int>
-    get() = setOf()
+  open fun isKnownFailure(test: NormalizationTestData): Boolean = false
 
   @Test
   fun normalize() {
@@ -34,11 +33,8 @@ abstract class AbstractNormalizationTest {
           okhttpIcu.normalizeNfc(line.source),
           "${line.part} ${line.lineNumber} ${line.source} ${line.comment}",
         )
-        require(line.lineNumber !in knownFailureLineNumbers) {
-          "expected failure for ${line.lineNumber}"
-        }
       } catch (e: AssertionError) {
-        if (line.lineNumber !in knownFailureLineNumbers) throw e
+        if (!isKnownFailure(line)) throw e
       }
     }
   }
