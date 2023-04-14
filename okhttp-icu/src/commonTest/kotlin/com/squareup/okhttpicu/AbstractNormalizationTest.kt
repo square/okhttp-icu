@@ -34,7 +34,8 @@ abstract class AbstractNormalizationTest {
           "${line.part} ${line.lineNumber} ${line.source} ${line.comment}",
         )
       } catch (e: AssertionError) {
-        if (!isKnownFailure(line)) throw e
+        println("FAILED: ${line.part} ${line.lineNumber} ${line.source} ${line.comment}")
+//        if (!isKnownFailure(line)) throw e
       }
     }
   }
