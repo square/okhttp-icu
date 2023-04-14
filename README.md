@@ -1,7 +1,14 @@
 OkHttp-ICU
 ==========
 
-This builds a minimal subset of [ICU] required by [OkHttp].
+This is a [Kotlin/Multiplatform] API to the subset of [ICU] required by [OkHttp].
+
+This project builds upon the following implementations:
+
+ * [ICU4C]: for Kotlin/Native on LinuxX64. (This project also builds ICU4C for Mac, but only uses
+   that implementation in tests.)
+ * [Core Foundation APIs]: for all Apple platforms where Kotlin/Multiplatform runs.
+ * [Java APIs]: for JVM platforms.
 
 
 Directory Structure
@@ -31,7 +38,12 @@ Developing
 You'll need [Git LFS] for ICU.
 
 
+[Core Foundation APIs]: https://developer.apple.com/documentation/corefoundation/cfstringnormalizationform
 [Git LFS]: https://git-lfs.com/
 [Git Submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
+[ICU4C]: https://unicode-org.github.io/icu/userguide/icu4c/
 [ICU]: https://icu.unicode.org/
+[Java APIs]: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/Normalizer.html
+[Kotlin/Multiplatform]: https://kotlinlang.org/docs/multiplatform.html
 [OkHttp]: https://github.com/square/okhttp
+[]: https://developer.apple.com/documentation/corefoundation/cfstringnormalizationform

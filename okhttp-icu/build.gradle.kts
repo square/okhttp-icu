@@ -22,7 +22,7 @@ kotlin {
 //    nodejs()
 //  }
 
-//  linuxX64()
+  linuxX64()
   macosX64()
   macosArm64()
 //  iosArm64()
@@ -74,13 +74,22 @@ kotlin {
       }
     }
 
+    val linuxX64Main by getting {
+      dependsOn(nativeMain)
+      dependencies {
+        api(projects.okhttpIcu4c)
+      }
+    }
+    val linuxX64Test by getting {
+      dependsOn(nativeTest)
+    }
+
     val appleMain by creating {
       dependsOn(nativeMain)
     }
     val appleTest by creating {
       dependsOn(nativeTest)
     }
-
     val macosArm64Main by getting {
       dependsOn(appleMain)
     }

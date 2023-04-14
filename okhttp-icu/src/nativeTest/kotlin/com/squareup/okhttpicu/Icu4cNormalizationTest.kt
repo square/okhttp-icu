@@ -16,5 +16,9 @@
 package com.squareup.okhttpicu
 
 class Icu4cNormalizationTest : AbstractNormalizationTest() {
-  override val normalizer = ICU4C_NORMALIZER
+  override val normalizer = object : Normalizer {
+    override fun normalizeNfc(string: String): String {
+      return Icu4c.normalizeNfc(string)
+    }
+  }
 }

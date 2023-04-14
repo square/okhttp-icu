@@ -15,7 +15,7 @@
  */
 package com.squareup.okhttpicu
 
-val ICU4C_NORMALIZER = object : Normalizer {
+actual val SYSTEM_NORMALIZER = object : Normalizer {
   override fun normalizeNfc(string: String): String {
     return Icu4c.normalizeNfc(string)
   }

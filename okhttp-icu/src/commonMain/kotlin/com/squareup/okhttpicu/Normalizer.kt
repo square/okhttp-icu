@@ -18,3 +18,5 @@ package com.squareup.okhttpicu
 interface Normalizer {
   fun normalizeNfc(string: String): String
 }
+
+expect val SYSTEM_NORMALIZER: Normalizer
