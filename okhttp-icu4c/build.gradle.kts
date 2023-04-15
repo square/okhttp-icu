@@ -103,6 +103,14 @@ tasks.all {
   }
 }
 
+// Only build ICU4C when the host platform exactly matches the target platform. We haven't done the
+// work to support cross-compiling across CPU architectures.
+tasks.all {
+  val kotlinNativePlatform = this.kotlinNativePlatform ?: return@all
+  if (kotlinNativePlatform.supportsIcu4c) {
+    onlyIf { kotlinNativePlatform == buildHostPlatform }
+  }
+}
 
 configure<MavenPublishBaseExtension> {
   configure(

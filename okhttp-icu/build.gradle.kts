@@ -49,13 +49,6 @@ kotlin {
       }
     }
 
-    val icu4cTest by creating {
-      dependsOn(commonTest)
-      dependencies {
-        api(projects.okhttpIcu4c)
-      }
-    }
-
     targets.withType<KotlinNativeTargetWithTests<*>> {
       binaries {
         // Configure a separate test where code is compiled in release mode.
@@ -83,7 +76,6 @@ kotlin {
     }
     val linuxTest by creating {
       dependsOn(commonTest)
-      dependsOn(icu4cTest)
     }
 
     val windowsMain by creating {
@@ -112,18 +104,22 @@ kotlin {
       )
     }
 
-    // Test ICU4C on Macs but not any other Apple devices.
-    val macosX64Test by getting {
-      dependsOn(icu4cTest)
-    }
-    val macosArm64Test by getting {
-      dependsOn(icu4cTest)
-    }
-
     val jsTest by getting {
       dependencies {
         api(libs.okio.nodefilesystem)
       }
+    }
+
+    // Add the ICU4C tests for the build host platform.
+    if (buildHostPlatform.supportsIcu4c) {
+      val icu4cTest by creating {
+        dependsOn(commonTest)
+        dependencies {
+          api(projects.okhttpIcu4c)
+        }
+      }
+      val buildHostTest = get("${buildHostPlatform.lowerCamel}Test")
+      buildHostTest.dependsOn(icu4cTest)
     }
   }
 }

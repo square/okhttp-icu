@@ -129,20 +129,10 @@ allprojects {
   }
 
   // Our CI builds run on either 'ubuntu-latest', 'macOS-latest', or 'windows-latest'. Run each
-  // Kotlin/Native target on exactly one of these.
-  //
-  // We must include non-matching platforms in our Gradle configuration to get full set of platforms
-  // listed in the published .module file.
-  //
-  // We don't cross-compile because we haven't done the work to support it.
+  // Kotlin/Native task on exactly one of these. (We include non-matching platforms in our Gradle
+  // configuration to get full set of platforms listed in the published .module file.)
   tasks.all {
-    for (platform in KotlinNativePlatform.values()) {
-      if (!platform.matchesTask(name)) continue
-
-      onlyIf { platform.osFamily == buildHostOsFamily }
-      check(name in platform.knownTasks) {
-        "unexpected task name $name contains a Kotlin/Native platform name: update this allowlist?"
-      }
-    }
+    val kotlinNativePlatform = this.kotlinNativePlatform ?: return@all
+    onlyIf { kotlinNativePlatform.osFamily == buildHostPlatform.osFamily }
   }
 }
