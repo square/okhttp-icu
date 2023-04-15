@@ -5,7 +5,7 @@ object OkHttpIcuBuild {
   val osName = System.getProperty("os.name")
   val isMac = osName == "Mac OS X"
   val isLinux = osName == "Linux"
-  val isWindows = osName.startsWith("win")
+  val isWindows = osName.startsWith("Windows", ignoreCase = true)
 }
 
 /** This lists the platforms we know how to build. */

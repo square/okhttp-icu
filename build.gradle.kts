@@ -49,9 +49,6 @@ subprojects {
 //  }
 }
 
-println("osArch=${System.getProperty("os.arch")}")
-println("osName=${System.getProperty("os.name")}")
-
 allprojects {
   tasks.withType<DokkaTask>().configureEach {
     dokkaSourceSets.configureEach {
