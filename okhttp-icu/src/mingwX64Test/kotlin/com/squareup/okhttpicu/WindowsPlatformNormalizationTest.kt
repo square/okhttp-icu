@@ -17,4 +17,8 @@ package com.squareup.okhttpicu
 
 class WindowsPlatformNormalizationTest : AbstractNormalizationTest() {
   override val normalizer = SYSTEM_NORMALIZER
+
+  override fun isKnownFailure(test: NormalizationTestData): Boolean {
+    return test.lineNumber in 17149..18948 // Windows has an out of date ICU.
+  }
 }
