@@ -1,42 +1,31 @@
 # Releasing
 
-1. Update the `VERSION_NAME` in `gradle.properties` to the release version.
+1. Update the `CHANGELOG.md`.
 
-2. Update the `CHANGELOG.md`:
-   1. Change the `Unreleased` header to the release version.
-   2. Add a link URL to ensure the header link works.
-   3. Add a new `Unreleased` section to the top.
+2. Update the `VERSION_NAME` in `gradle.properties` to the release version.
 
-3. Update the `README.md` so the "Download" section reflects the new release version and the
-   snapshot section reflects the next "SNAPSHOT" version.
+3. Commit and tag.
 
-4. Commit
-
-   ```
-   $ git commit -am "Prepare version X.Y.X"
+   ```bash
+   export VERSION_NAME=`cat gradle.properties | grep VERSION_NAME | cut -d= -f2`
+   git commit -am "Prepare version $VERSION_NAME"
+   git tag -am "Version $VERSION_NAME" $VERSION_NAME
    ```
 
-5. Tag
+4. Update the `VERSION_NAME` in `gradle.properties` to the next "SNAPSHOT" version.
 
-   ```
-   $ git tag -am "Version X.Y.Z" X.Y.Z
-   ```
+5. Commit and push.
 
-6. Update the `VERSION_NAME` in `gradle.properties` to the next "SNAPSHOT" version.
-
-7. Commit
-
-   ```
-   $ git commit -am "Prepare next development version"
+   ```bash
+   git commit -am "Prepare next development version"
+   git push
+   git push --tags
    ```
 
-8. Push!
+   This will trigger the GitHub Action `publish` workflow. It builds a release, uploads it to Maven
+   Central, and promotes it.
 
-   ```
-   $ git push && git push --tags
-   ```
+6. Confirm the build succeeds on [GitHub Actions].
 
-   This will trigger a GitHub Action workflow which will create a GitHub release and upload the
-   release artifacts to Sonatype Nexus.
 
-9. Visit [Sonatype Nexus](https://oss.sonatype.org/) and promote the artifact.
+[GitHub Actions]: https://github.com/square/okhttp-icu/actions

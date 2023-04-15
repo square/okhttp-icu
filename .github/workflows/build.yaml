@@ -46,7 +46,7 @@ jobs:
       - run: git submodule update --init --recursive
 
       # Publish MacosX64 (Mac on Intel).
-      - run: ./gradlew publishMacosX64PublicationToMavenCentralRepository
+      - run: ./gradlew publishMacosX64PublicationToMavenCentralRepository publishMacosArm64PublicationToMavenCentralRepository
         if: matrix.os == 'macOS-latest'
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
