@@ -27,11 +27,11 @@ class FileFinder(
    * directory.
    */
   fun find(relativePath: String): Path {
-    var cwd = fileSystem.canonicalize(".".toPath())
+    var base = fileSystem.canonicalize(".".toPath())
     while (true) {
-      val candidate = cwd / relativePath
+      val candidate = base / relativePath
       if (fileSystem.exists(candidate)) return candidate
-      cwd = cwd.parent ?: error("failed to find $relativePath")
+      base = base.parent ?: error("failed to find $relativePath")
     }
   }
 }
