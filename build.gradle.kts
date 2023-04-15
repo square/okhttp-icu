@@ -5,6 +5,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 buildscript {
@@ -77,6 +78,12 @@ allprojects {
       showStandardStreams = true
       showStackTraces = true
     }
+  }
+
+  tasks.withType<KotlinNativeTest>().configureEach {
+    // https://stackoverflow.com/a/53604237/40013
+    environment("SIMCTL_CHILD_OKHTTP_ICU_ROOT_DIR", rootDir, tracked = true)
+    environment("OKHTTP_ICU_ROOT_DIR", rootDir, tracked = true)
   }
 
   plugins.withId("org.jetbrains.kotlin.multiplatform") {

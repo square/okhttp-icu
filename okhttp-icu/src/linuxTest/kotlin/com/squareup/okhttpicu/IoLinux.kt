@@ -15,6 +15,10 @@
  */
 package com.squareup.okhttpicu
 
+import kotlinx.cinterop.toKString
 import okio.FileSystem
+import platform.posix.getenv
 
 internal actual val SYSTEM_FILE_SYSTEM: FileSystem = FileSystem.SYSTEM
+
+internal actual fun getEnv(name: String): String? = getenv(name)?.toKString()

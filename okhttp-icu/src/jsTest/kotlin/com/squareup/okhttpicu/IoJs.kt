@@ -19,3 +19,5 @@ import okio.FileSystem
 import okio.NodeJsFileSystem
 
 internal actual val SYSTEM_FILE_SYSTEM: FileSystem = NodeJsFileSystem
+
+internal actual fun getEnv(name: String): String? = null
