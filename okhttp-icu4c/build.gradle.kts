@@ -16,12 +16,6 @@ kotlin {
   linuxX64()
   macosX64()
   macosArm64()
-//  iosArm64()
-//  iosX64()
-//  iosSimulatorArm64()
-//  tvosArm64()
-//  tvosSimulatorArm64()
-//  tvosX64()
 
   sourceSets {
     val commonMain by getting {
@@ -84,12 +78,12 @@ val cleanIcu4c by tasks.creating {
 
 val buildIcu4cMacOSX = tasks.register<BuildIcu4c>("buildIcu4cMacOSX") {
   platform.set("MacOSX")
-  onlyIf { OkHttpIcuBuild.isMac }
+  onlyIf { buildHostOsFamily == OsFamily.Apple }
 }
 
 val buildIcu4cLinux = tasks.register<BuildIcu4c>("buildIcu4cLinux") {
   platform.set("Linux")
-  onlyIf { OkHttpIcuBuild.isLinux }
+  onlyIf { buildHostOsFamily == OsFamily.Linux }
 }
 
 tasks.all {
@@ -109,6 +103,14 @@ tasks.all {
   }
 }
 
+// Only build ICU4C when the host platform exactly matches the target platform. We haven't done the
+// work to support cross-compiling across CPU architectures.
+tasks.all {
+  val kotlinNativePlatform = this.kotlinNativePlatform ?: return@all
+  if (kotlinNativePlatform.supportsIcu4c) {
+    onlyIf { kotlinNativePlatform == buildHostPlatform }
+  }
+}
 
 configure<MavenPublishBaseExtension> {
   configure(

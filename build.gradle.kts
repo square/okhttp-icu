@@ -5,6 +5,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 buildscript {
@@ -79,6 +80,12 @@ allprojects {
     }
   }
 
+  tasks.withType<KotlinNativeTest>().configureEach {
+    // https://stackoverflow.com/a/53604237/40013
+    environment("SIMCTL_CHILD_OKHTTP_ICU_ROOT_DIR", rootDir)
+    environment("OKHTTP_ICU_ROOT_DIR", rootDir)
+  }
+
   plugins.withId("org.jetbrains.kotlin.multiplatform") {
     configure<KotlinMultiplatformExtension> {
       jvmToolchain(11)
@@ -121,47 +128,11 @@ allprojects {
     }
   }
 
-  // Disable every task that doesn't match the build host. We haven't done the work to support
-  // either cross-compiling ICU, or testing cross-compiled ICU.
-  //
-  // We still include non-matching platforms in our Gradle configuration because we want the full
-  // set of platforms to be listed in the Kotlin Multiplatform .module file.
+  // Our CI builds run on either 'ubuntu-latest', 'macOS-latest', or 'windows-latest'. Run each
+  // Kotlin/Native task on exactly one of these. (We include non-matching platforms in our Gradle
+  // configuration to get full set of platforms listed in the published .module file.)
   tasks.all {
-    for (kotlinNativePlatform in KotlinNativePlatform.values()) {
-      if (kotlinNativePlatform.name !in name && kotlinNativePlatform.lowerCamel !in name) {
-        continue
-      }
-
-      onlyIf { kotlinNativePlatform.matchesBuildHost() }
-      check(
-        name == "${kotlinNativePlatform.lowerCamel}Binaries" ||
-        name == "${kotlinNativePlatform.lowerCamel}MainBinaries" ||
-        name == "${kotlinNativePlatform.lowerCamel}MainKlibrary" ||
-        name == "${kotlinNativePlatform.lowerCamel}MetadataJar" ||
-        name == "${kotlinNativePlatform.lowerCamel}ProcessResources" ||
-        name == "${kotlinNativePlatform.lowerCamel}ReleaseTest" ||
-        name == "${kotlinNativePlatform.lowerCamel}SourcesJar" ||
-        name == "${kotlinNativePlatform.lowerCamel}Test" ||
-        name == "${kotlinNativePlatform.lowerCamel}TestBinaries" ||
-        name == "${kotlinNativePlatform.lowerCamel}TestKlibrary" ||
-        name == "${kotlinNativePlatform.lowerCamel}TestProcessResources" ||
-        name == "cinteropIcu4c${kotlinNativePlatform}" ||
-        name == "clean${kotlinNativePlatform}ReleaseTest" ||
-        name == "clean${kotlinNativePlatform}Test" ||
-        name == "compileKotlin${kotlinNativePlatform}" ||
-        name == "compileTestKotlin${kotlinNativePlatform}" ||
-        name == "copyCinteropIcu4c${kotlinNativePlatform}" ||
-        name == "generateMetadataFileFor${kotlinNativePlatform}Publication" ||
-        name == "generatePomFileFor${kotlinNativePlatform}Publication" ||
-        name == "link${kotlinNativePlatform}" ||
-        name == "linkDebugTest${kotlinNativePlatform}" ||
-        name == "linkReleaseTest${kotlinNativePlatform}" ||
-        name == "publish${kotlinNativePlatform}PublicationToMavenCentralRepository" ||
-        name == "publish${kotlinNativePlatform}PublicationToMavenLocal" ||
-        name == "sign${kotlinNativePlatform}Publication"
-      ) {
-        "unexpected task name $name contains a Kotlin/Native platform name: update this allowlist?"
-      }
-    }
+    val kotlinNativePlatform = this.kotlinNativePlatform ?: return@all
+    onlyIf { kotlinNativePlatform.osFamily == buildHostPlatform.osFamily }
   }
 }

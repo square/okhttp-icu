@@ -23,15 +23,18 @@ class FileFinder(
   private val fileSystem: FileSystem,
 ) {
   /**
-   * Finds a path that ends with [relativePath] and that begins with a prefix of the current working
-   * directory.
+   * Finds a path that ends with [relativePath]. The search begins with the project directory
+   * (`OKHTTP_ICU_ROOT_DIR`) or the current working directory, and walks up the directory tree until
+   * the file is found.
    */
   fun find(relativePath: String): Path {
-    var base = fileSystem.canonicalize(".".toPath())
+    val okHttpIcuRootDir = getEnv("OKHTTP_ICU_ROOT_DIR")
+    val firstPath = fileSystem.canonicalize((okHttpIcuRootDir ?: ".").toPath())
+    var base = firstPath
     while (true) {
       val candidate = base / relativePath
       if (fileSystem.exists(candidate)) return candidate
-      base = base.parent ?: error("failed to find $relativePath")
+      base = base.parent ?: error("failed to find $relativePath; firstPath=$firstPath")
     }
   }
 }

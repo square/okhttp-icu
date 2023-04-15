@@ -18,3 +18,5 @@ package com.squareup.okhttpicu
 import okio.FileSystem
 
 internal expect val SYSTEM_FILE_SYSTEM: FileSystem
+
+internal expect fun getEnv(name: String): String?
