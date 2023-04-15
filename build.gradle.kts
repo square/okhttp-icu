@@ -82,8 +82,8 @@ allprojects {
 
   tasks.withType<KotlinNativeTest>().configureEach {
     // https://stackoverflow.com/a/53604237/40013
-    environment("SIMCTL_CHILD_OKHTTP_ICU_ROOT_DIR", rootDir, tracked = true)
-    environment("OKHTTP_ICU_ROOT_DIR", rootDir, tracked = true)
+    environment("SIMCTL_CHILD_OKHTTP_ICU_ROOT_DIR", rootDir)
+    environment("OKHTTP_ICU_ROOT_DIR", rootDir)
   }
 
   plugins.withId("org.jetbrains.kotlin.multiplatform") {
