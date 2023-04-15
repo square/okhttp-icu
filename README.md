@@ -46,4 +46,3 @@ You'll need [Git LFS] for ICU.
 [Java APIs]: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/Normalizer.html
 [Kotlin/Multiplatform]: https://kotlinlang.org/docs/multiplatform.html
 [OkHttp]: https://github.com/square/okhttp
-[]: https://developer.apple.com/documentation/corefoundation/cfstringnormalizationform

@@ -16,6 +16,9 @@
 package com.squareup.okhttpicu
 
 import okio.Buffer
+import okio.BufferedSource
+import okio.FileSystem
+import okio.Path
 import okio.Path.Companion.toPath
 
 /**
@@ -35,40 +38,75 @@ class NormalizationTestData(
 ) {
   companion object {
     fun load(): List<NormalizationTestData> {
-      return SYSTEM_FILE_SYSTEM.read("src/commonTest/testdata/NormalizationTest.txt".toPath()) {
-        val result = mutableListOf<NormalizationTestData>()
+      val fileSystem = SYSTEM_FILE_SYSTEM
+      val root = fileSystem.projectRoot()
+      val path = root / "okhttp-icu" / "src" / "commonTest" / "testdata" / "NormalizationTest.txt"
+      return fileSystem.read(path) {
+        readNormalizationTestData()
+      }
+    }
 
-        var nextLineNumber = 1
-        var part: String? = null
-        while (!exhausted()) {
-          val lineNumber = nextLineNumber++
-          val line = readUtf8LineStrict()
+    /**
+     * Returns the path to the root of the okhttp-icu project. This assumes that the current working
+     * directory is a child of a directory of that name, and the project root is the topmost
+     * directory with that name.
+     *
+     * This will return the wrong answer if the project is checked out into a root directory like
+     * `/Users/jesse/okhttp-icu/versions/current/okhttp-icu`.
+     */
+    private fun FileSystem.projectRoot(): Path {
+      val cwd = ".".toPath()
+      val projectName = "okhttp-icu"
+      return canonicalize(cwd).dropSegmentsAfterFirst(projectName)
+    }
 
-          if (line.startsWith("#")) {
-            continue
-          }
+    /**
+     * Given a path like `/Users/jesse/okhttp-icu/build/js/packages/okhttp-icu-root` or
+     * `/Users/jesse/okhttp-icu/okhttp-icu4c`, this returns a path like `/Users/jesse/okhttp-icu/`.
+     */
+    private fun Path.dropSegmentsAfterFirst(name: String): Path {
+      val segments = this.segments
+      val segmentsToDrop = segments.size - segments.indexOf(name) - 1
+      var result = this
+      for (i in 0 until segmentsToDrop) {
+        result = result.parent!!
+      }
+      return result
+    }
 
-          if (line.startsWith("@")) {
-            part = line
-            continue
-          }
+    private fun BufferedSource.readNormalizationTestData(): List<NormalizationTestData> {
+      val result = mutableListOf<NormalizationTestData>()
 
-          val columns = line.split(';', limit = 6)
+      var nextLineNumber = 1
+      var part: String? = null
+      while (!exhausted()) {
+        val lineNumber = nextLineNumber++
+        val line = readUtf8LineStrict()
 
-          result += NormalizationTestData(
-            lineNumber = lineNumber,
-            part = part,
-            source = columns[0].decodeHexCodePoints(),
-            nfc = columns[1].decodeHexCodePoints(),
-            nfd = columns[2].decodeHexCodePoints(),
-            nfkc = columns[3].decodeHexCodePoints(),
-            nfkd = columns[4].decodeHexCodePoints(),
-            comment = columns.getOrNull(5)?.removePrefix(" # "),
-          )
+        if (line.startsWith("#")) {
+          continue
         }
 
-        return@read result
+        if (line.startsWith("@")) {
+          part = line
+          continue
+        }
+
+        val columns = line.split(';', limit = 6)
+
+        result += NormalizationTestData(
+          lineNumber = lineNumber,
+          part = part,
+          source = columns[0].decodeHexCodePoints(),
+          nfc = columns[1].decodeHexCodePoints(),
+          nfd = columns[2].decodeHexCodePoints(),
+          nfkc = columns[3].decodeHexCodePoints(),
+          nfkd = columns[4].decodeHexCodePoints(),
+          comment = columns.getOrNull(5)?.removePrefix(" # "),
+        )
       }
+
+      return result
     }
 
     private fun String.decodeHexCodePoints(): String {
