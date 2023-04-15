@@ -1,7 +1,6 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.TestExecutable
@@ -31,6 +30,7 @@ kotlin {
 //  tvosArm64()
 //  tvosSimulatorArm64()
 //  tvosX64()
+  mingwX64()
 
   sourceSets {
     val commonMain by getting {
@@ -44,22 +44,11 @@ kotlin {
       }
     }
 
-    val nativeMain by creating {
-      dependsOn(commonMain)
-    }
-    val nativeTest by creating {
+    val icu4cTest by creating {
       dependsOn(commonTest)
       dependencies {
         api(projects.okhttpIcu4c)
       }
-    }
-
-    targets.withType<KotlinNativeTarget> {
-      val main by compilations.getting
-      main.defaultSourceSet.dependsOn(nativeMain)
-
-      val test by compilations.getting
-      test.defaultSourceSet.dependsOn(nativeTest)
     }
 
     targets.withType<KotlinNativeTargetWithTests<*>> {
@@ -75,20 +64,21 @@ kotlin {
     }
 
     val linuxX64Main by getting {
-      dependsOn(nativeMain)
+      dependsOn(commonMain)
       dependencies {
         api(projects.okhttpIcu4c)
       }
     }
     val linuxX64Test by getting {
-      dependsOn(nativeTest)
+      dependsOn(icu4cTest)
     }
 
     val appleMain by creating {
-      dependsOn(nativeMain)
+      dependsOn(commonMain)
     }
     val appleTest by creating {
-      dependsOn(nativeTest)
+      dependsOn(commonTest)
+      dependsOn(icu4cTest)
     }
     val macosArm64Main by getting {
       dependsOn(appleMain)
