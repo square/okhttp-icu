@@ -17,9 +17,6 @@ package com.squareup.okhttpicu
 
 import okio.Buffer
 import okio.BufferedSource
-import okio.FileSystem
-import okio.Path
-import okio.Path.Companion.toPath
 
 /**
  * The [Unicode Normalization Test Suite](https://www.unicode.org/Public/15.0.0/ucd/NormalizationTest.txt).
@@ -38,40 +35,11 @@ class NormalizationTestData(
 ) {
   companion object {
     fun load(): List<NormalizationTestData> {
-      val fileSystem = SYSTEM_FILE_SYSTEM
-      val root = fileSystem.projectRoot()
-      val path = root / "okhttp-icu" / "src" / "commonTest" / "testdata" / "NormalizationTest.txt"
-      return fileSystem.read(path) {
+      val path = FileFinder(SYSTEM_FILE_SYSTEM)
+        .find("okhttp-icu/src/commonTest/testdata/NormalizationTest.txt")
+      return SYSTEM_FILE_SYSTEM.read(path) {
         readNormalizationTestData()
       }
-    }
-
-    /**
-     * Returns the path to the root of the okhttp-icu project. This assumes that the current working
-     * directory is a child of a directory of that name, and the project root is the topmost
-     * directory with that name.
-     *
-     * This will return the wrong answer if the project is checked out into a root directory like
-     * `/Users/jesse/okhttp-icu/versions/current/okhttp-icu`.
-     */
-    private fun FileSystem.projectRoot(): Path {
-      val cwd = ".".toPath()
-      val projectName = "okhttp-icu"
-      return canonicalize(cwd).dropSegmentsAfterFirst(projectName)
-    }
-
-    /**
-     * Given a path like `/Users/jesse/okhttp-icu/build/js/packages/okhttp-icu-root` or
-     * `/Users/jesse/okhttp-icu/okhttp-icu4c`, this returns a path like `/Users/jesse/okhttp-icu/`.
-     */
-    private fun Path.dropSegmentsAfterFirst(name: String): Path {
-      val segments = this.segments
-      val segmentsToDrop = segments.size - segments.indexOf(name) - 1
-      var result = this
-      for (i in 0 until segmentsToDrop) {
-        result = result.parent!!
-      }
-      return result
     }
 
     private fun BufferedSource.readNormalizationTestData(): List<NormalizationTestData> {
