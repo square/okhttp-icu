@@ -21,16 +21,21 @@ kotlin {
     nodejs()
   }
 
+  iosArm64()
+  iosSimulatorArm64()
+  iosX64()
   linuxX64()
-  macosX64()
   macosArm64()
-//  iosArm64()
-//  iosX64()
-//  iosSimulatorArm64()
-//  tvosArm64()
-//  tvosSimulatorArm64()
-//  tvosX64()
+  macosX64()
   mingwX64()
+  tvosArm64()
+  tvosSimulatorArm64()
+  tvosX64()
+  watchosArm32()
+  watchosArm64()
+  watchosSimulatorArm64()
+  watchosX64()
+  watchosX86()
 
   sourceSets {
     val commonMain by getting {
@@ -63,35 +68,56 @@ kotlin {
       }
     }
 
-    val linuxX64Main by getting {
-      dependsOn(commonMain)
-      dependencies {
-        api(projects.okhttpIcu4c)
-      }
-    }
-    val linuxX64Test by getting {
-      dependsOn(icu4cTest)
-    }
-
     val appleMain by creating {
       dependsOn(commonMain)
     }
     val appleTest by creating {
       dependsOn(commonTest)
-      dependsOn(icu4cTest)
-    }
-    val macosArm64Main by getting {
-      dependsOn(appleMain)
-    }
-    val macosArm64Test by getting {
-      dependsOn(appleTest)
     }
 
-    val macosX64Main by getting {
-      dependsOn(appleMain)
+    val linuxMain by creating {
+      dependsOn(commonMain)
+      dependencies {
+        api(projects.okhttpIcu4c)
+      }
     }
+    val linuxTest by creating {
+      dependsOn(commonTest)
+      dependsOn(icu4cTest)
+    }
+
+    val windowsMain by creating {
+      dependsOn(commonMain)
+    }
+    val windowsTest by creating {
+      dependsOn(commonTest)
+    }
+
+    for (platform in KotlinNativePlatform.values()) {
+      val platformMain = get("${platform.lowerCamel}Main")
+      platformMain.dependsOn(
+        when (platform.osFamily) {
+          OsFamily.Apple -> appleMain
+          OsFamily.Linux -> linuxMain
+          OsFamily.Windows -> windowsMain
+        }
+      )
+      val platformTest = get("${platform.lowerCamel}Test")
+      platformTest.dependsOn(
+        when (platform.osFamily) {
+          OsFamily.Apple -> appleTest
+          OsFamily.Linux -> linuxTest
+          OsFamily.Windows -> windowsTest
+        }
+      )
+    }
+
+    // Test ICU4C on Macs but not any other Apple devices.
     val macosX64Test by getting {
-      dependsOn(appleTest)
+      dependsOn(icu4cTest)
+    }
+    val macosArm64Test by getting {
+      dependsOn(icu4cTest)
     }
 
     val jsTest by getting {
