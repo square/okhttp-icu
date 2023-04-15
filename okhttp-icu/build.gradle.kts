@@ -31,6 +31,7 @@ kotlin {
 //  tvosArm64()
 //  tvosSimulatorArm64()
 //  tvosX64()
+  mingwX64()
 
   sourceSets {
     val commonMain by getting {
