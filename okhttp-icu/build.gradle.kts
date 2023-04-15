@@ -18,9 +18,9 @@ kotlin {
 //  }
   jvm()
 
-//  js {
-//    nodejs()
-//  }
+  js {
+    nodejs()
+  }
 
   linuxX64()
   macosX64()
@@ -102,6 +102,12 @@ kotlin {
     }
     val macosX64Test by getting {
       dependsOn(appleTest)
+    }
+
+    val jsTest by getting {
+      dependencies {
+        api(libs.okio.nodefilesystem)
+      }
     }
   }
 }

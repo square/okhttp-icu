@@ -16,7 +16,7 @@
 package com.squareup.okhttpicu
 
 import okio.Buffer
-import okio.Path.Companion.toPath
+import okio.BufferedSource
 
 /**
  * The [Unicode Normalization Test Suite](https://www.unicode.org/Public/15.0.0/ucd/NormalizationTest.txt).
@@ -35,40 +35,46 @@ class NormalizationTestData(
 ) {
   companion object {
     fun load(): List<NormalizationTestData> {
-      return SYSTEM_FILE_SYSTEM.read("src/commonTest/testdata/NormalizationTest.txt".toPath()) {
-        val result = mutableListOf<NormalizationTestData>()
+      val path = FileFinder(SYSTEM_FILE_SYSTEM)
+        .find("okhttp-icu/src/commonTest/testdata/NormalizationTest.txt")
+      return SYSTEM_FILE_SYSTEM.read(path) {
+        readNormalizationTestData()
+      }
+    }
 
-        var nextLineNumber = 1
-        var part: String? = null
-        while (!exhausted()) {
-          val lineNumber = nextLineNumber++
-          val line = readUtf8LineStrict()
+    private fun BufferedSource.readNormalizationTestData(): List<NormalizationTestData> {
+      val result = mutableListOf<NormalizationTestData>()
 
-          if (line.startsWith("#")) {
-            continue
-          }
+      var nextLineNumber = 1
+      var part: String? = null
+      while (!exhausted()) {
+        val lineNumber = nextLineNumber++
+        val line = readUtf8LineStrict()
 
-          if (line.startsWith("@")) {
-            part = line
-            continue
-          }
-
-          val columns = line.split(';', limit = 6)
-
-          result += NormalizationTestData(
-            lineNumber = lineNumber,
-            part = part,
-            source = columns[0].decodeHexCodePoints(),
-            nfc = columns[1].decodeHexCodePoints(),
-            nfd = columns[2].decodeHexCodePoints(),
-            nfkc = columns[3].decodeHexCodePoints(),
-            nfkd = columns[4].decodeHexCodePoints(),
-            comment = columns.getOrNull(5)?.removePrefix(" # "),
-          )
+        if (line.startsWith("#")) {
+          continue
         }
 
-        return@read result
+        if (line.startsWith("@")) {
+          part = line
+          continue
+        }
+
+        val columns = line.split(';', limit = 6)
+
+        result += NormalizationTestData(
+          lineNumber = lineNumber,
+          part = part,
+          source = columns[0].decodeHexCodePoints(),
+          nfc = columns[1].decodeHexCodePoints(),
+          nfd = columns[2].decodeHexCodePoints(),
+          nfkc = columns[3].decodeHexCodePoints(),
+          nfkd = columns[4].decodeHexCodePoints(),
+          comment = columns.getOrNull(5)?.removePrefix(" # "),
+        )
       }
+
+      return result
     }
 
     private fun String.decodeHexCodePoints(): String {
