@@ -18,8 +18,6 @@ package com.squareup.okhttpicu
 class JvmPlatformNormalizationTest : AbstractNormalizationTest() {
   override val normalizer = SYSTEM_NORMALIZER
 
-  override fun isKnownFailure(test: NormalizationTestData): Boolean {
-    // The JVM embeds an old version of ICU.
-    return test.lineNumber in 17149.. 18948
-  }
+  override fun isKnownFailure(test: NormalizationTestData) =
+    test.lineNumber in 17149..18948 // The JVM embeds an old version of ICU.
 }

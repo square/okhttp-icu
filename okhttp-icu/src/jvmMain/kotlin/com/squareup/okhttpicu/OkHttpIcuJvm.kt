@@ -18,7 +18,6 @@ package com.squareup.okhttpicu
 import java.text.Normalizer.Form.NFC
 
 actual val SYSTEM_NORMALIZER = object : Normalizer {
-  override fun normalizeNfc(string: String): String {
-    return java.text.Normalizer.normalize(string, NFC)
-  }
+  override fun normalizeNfc(string: String) =
+    java.text.Normalizer.normalize(string, NFC)
 }

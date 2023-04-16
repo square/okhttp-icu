@@ -16,8 +16,6 @@
 package com.squareup.okhttpicu
 
 actual val SYSTEM_NORMALIZER = object : Normalizer {
-  override fun normalizeNfc(string: String): String {
-    val string = string // Expose the name 'string' to the js() block.
-    return js("""string.normalize("NFC")""") as String
-  }
+  override fun normalizeNfc(string: String) =
+    string.asDynamic().normalize("NFC") as String
 }
