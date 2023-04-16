@@ -18,7 +18,6 @@ package com.squareup.okhttpicu
 class JsPlatformNormalizationTest : AbstractNormalizationTest() {
   override val normalizer = SYSTEM_NORMALIZER
 
-  override fun isKnownFailure(test: NormalizationTestData): Boolean {
-    return test.lineNumber in 17149..18934 // Node has an out of date ICU.
-  }
+  override fun isKnownFailure(test: NormalizationTestData) =
+    test.lineNumber in 17149..18934 // Node has an out of date ICU.
 }
