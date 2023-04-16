@@ -46,4 +46,14 @@ class MaxExpansionWindowsTest {
       assertEquals(b.repeat(i), a.repeat(i).normalize(NormalizationKD))
     }
   }
+
+  @Test
+  fun substrings() {
+    val a = "0123456789".repeat(1000)
+    for (i in a.indices) {
+      println(i)
+      val substring = a.substring(0, i)
+      assertEquals(substring, substring.normalize(NormalizationKD))
+    }
+  }
 }
