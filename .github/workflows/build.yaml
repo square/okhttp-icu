@@ -45,7 +45,7 @@ jobs:
           java-version: 11
       - run: git submodule update --init --recursive
 
-      # Publish MacosX64 (Mac on Intel).
+      # Publish Mac artifacts.
       - run: ./gradlew publishMacosX64PublicationToMavenCentralRepository publishMacosArm64PublicationToMavenCentralRepository
         if: matrix.os == 'macOS-latest'
         env:
@@ -53,7 +53,7 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ARTIFACT_SIGNING_PRIVATE_KEY }}
 
-      # Publish MingwX64 (Windows).
+      # Publish Windows artifacts.
       - run: ./gradlew publishMingwX64PublicationToMavenCentralRepository
         if: matrix.os == 'windows-latest'
         env:
@@ -61,7 +61,7 @@ jobs:
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ARTIFACT_SIGNING_PRIVATE_KEY }}
 
-      # Publish everything else. (This won't publish anything above.)
+      # Publish Linux, JVM, JS, and multiplatform modules. (This won't publish anything above.)
       - run: ./gradlew publish
         if: matrix.os == 'ubuntu-latest'
         env:

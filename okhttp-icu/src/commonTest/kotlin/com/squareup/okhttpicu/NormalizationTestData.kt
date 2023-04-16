@@ -17,6 +17,7 @@ package com.squareup.okhttpicu
 
 import okio.Buffer
 import okio.BufferedSource
+import okio.Path.Companion.toPath
 
 /**
  * The [Unicode Normalization Test Suite](https://www.unicode.org/Public/15.0.0/ucd/NormalizationTest.txt).
@@ -34,9 +35,10 @@ class NormalizationTestData(
   val comment: String?,
 ) {
   companion object {
+    private val okHttpIcuRootDir = getEnv("OKHTTP_ICU_ROOT_DIR")!!.toPath()
+
     fun load(): List<NormalizationTestData> {
-      val path = FileFinder(SYSTEM_FILE_SYSTEM)
-        .find("okhttp-icu/src/commonTest/testdata/NormalizationTest.txt")
+      val path = okHttpIcuRootDir / "okhttp-icu/src/commonTest/testdata/NormalizationTest.txt"
       return SYSTEM_FILE_SYSTEM.read(path) {
         readNormalizationTestData()
       }

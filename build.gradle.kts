@@ -5,6 +5,8 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
@@ -80,10 +82,16 @@ allprojects {
     }
   }
 
+  // https://publicobject.com/2023/04/16/read-a-project-file-in-a-kotlin-multiplatform-test/
+  tasks.withType<KotlinJvmTest>().configureEach {
+    environment("OKHTTP_ICU_ROOT_DIR", rootDir)
+  }
   tasks.withType<KotlinNativeTest>().configureEach {
-    // https://stackoverflow.com/a/53604237/40013
     environment("SIMCTL_CHILD_OKHTTP_ICU_ROOT_DIR", rootDir)
     environment("OKHTTP_ICU_ROOT_DIR", rootDir)
+  }
+  tasks.withType<KotlinJsTest>().configureEach {
+    environment("OKHTTP_ICU_ROOT_DIR", rootDir.toString())
   }
 
   plugins.withId("org.jetbrains.kotlin.multiplatform") {
