@@ -38,4 +38,37 @@ abstract class AbstractNormalizationTest {
       }
     }
   }
+
+  /** https://unicode.org/faq/normalization.html#12 */
+  @Test
+  fun maximumExpansionNfcUtf8() {
+    val s = "\uD834\uDD60"
+    val sNfc = "\uD834\uDD58\uD834\uDD65\uD834\uDD6E"
+    assertEquals(sNfc, normalizer.normalizeNfc(s))
+    assertEquals(sNfc.repeat(1024), normalizer.normalizeNfc(s.repeat(1024)))
+  }
+
+  @Test
+  fun maximumExpansionNfcUtf16() {
+    val s = "\uFB2C"
+    val sNfc = "שּׁ"
+    assertEquals(sNfc, normalizer.normalizeNfc(s))
+    assertEquals(sNfc.repeat(1024), normalizer.normalizeNfc(s.repeat(1024)))
+  }
+
+  @Test
+  fun maximumExpansionNfdUtf8() {
+    val s = "ΐ"
+    val sNfc = "\u0390"
+    assertEquals(sNfc, normalizer.normalizeNfc(s))
+    assertEquals(sNfc.repeat(1024), normalizer.normalizeNfc(s.repeat(1024)))
+  }
+
+  @Test
+  fun maximumExpansionNfdUtf16() {
+    val s = "ᾂ"
+    val sNfc = "\u1F82"
+    assertEquals(sNfc, normalizer.normalizeNfc(s))
+    assertEquals(sNfc.repeat(1024), normalizer.normalizeNfc(s.repeat(1024)))
+  }
 }
