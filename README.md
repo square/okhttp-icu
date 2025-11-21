@@ -1,6 +1,13 @@
 OkHttp-ICU
 ==========
 
+# Deprecated
+
+This library is no longer actively developed.
+
+
+# About
+
 This is a [Kotlin/Multiplatform] API to the subset of [ICU] required by [OkHttp].
 
 This project builds upon the following implementations:
